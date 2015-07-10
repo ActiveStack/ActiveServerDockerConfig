@@ -1,0 +1,26 @@
+Name: ASAllInOne (Public)
+
+OS? - Debian:wheezy (many public images based on this)
+
+App Versions
+
+NodeJS v0.10.x
+Node-Gateway (https://github.com/percero/node-gateway)
+This also has the pfcontrol: https://github.com/percero/node-gateway/blob/master/scripts/pfcontrol
+JavaSDK v1.6
+MySQL v5.x
+Redis v2.8.x
+RabbitMQ v3.3.x
+
+Other
+Node-Gateway (https://github.com/percero/node-gateway)
+This also has the pfcontrol: https://github.com/percero/node-gateway/blob/master/scripts/pfcontrol
+
+Docker Images used
+https://registry.hub.docker.com/u/readytalk/nodejs/
+https://registry.hub.docker.com/_/redis/
+https://github.com/andreptb/Dockerfiles/blob/master/oracle-java/jdk-7/Dockerfile
+https://registry.hub.docker.com/_/mysql/
+https://registry.hub.docker.com/_/rabbitmq/
+
+
