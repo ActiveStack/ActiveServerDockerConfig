@@ -1,4 +1,4 @@
-FROM activestack/redis
+FROM percero/redis
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r mysql && useradd -r -g mysql mysql
@@ -32,10 +32,18 @@ RUN { \
 # comment out a few problematic configuration values
 RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/my.cnf
 
+# setup mysql
+#RUN sed -i -e"s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+#ADD set-mysql-password.sh /tmp/set-mysql-password.sh
+#RUN /bin/sh /tmp/set-mysql-password.sh
+
+# set root password
+#RUN echo "root:root" | chpasswd
+
 VOLUME /var/lib/mysql
 
-COPY mysql-entrypoint.sh /mysql-entrypoint.sh
-ENTRYPOINT ["/mysql-entrypoint.sh"]
+#COPY mysql-entrypoint.sh /mysql-entrypoint.sh
+#ENTRYPOINT ["/mysql-entrypoint.sh"]
 
 EXPOSE 3306
-CMD ["mysqld"]
+#CMD ["mysqld"]

@@ -1,19 +1,17 @@
 # Pull base image.
 FROM debian:wheezy
 
-ENV JAVA_VERSION 7
 
-# Install Java
-# http://www.webupd8.org/2012/06/how-to-install-oracle-java-7-in-debian.html
-RUN \
-    echo oracle-java$JAVA_VERSION-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee /etc/apt/sources.list.d/webupd8team-java.list && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 && \
-    apt-get update && \
-    apt-get -y install oracle-java$JAVA_VERSION-installer oracle-java$JAVA_VERSION-unlimited-jce-policy
+RUN apt-get update && apt-get install -y unzip && rm -rf /var/lib/apt/lists/*
 
-# Define working directory.
-WORKDIR /data
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
 
-# Define commonly used JAVA_HOME variable
-ENV JAVA_HOME /usr/lib/jvm/java-$JAVA_VERSION-oracle
+#ENV JAVA_VERSION 7u79
+#ENV JAVA_DEBIAN_VERSION 7u79-2.5.5-1~deb8u1
+
+RUN apt-get update && apt-get install -y openjdk-7-jdk && rm -rf /var/lib/apt/lists/*
+
+# If you're reading this and have any feedback on how this image could be
+#   improved, please open an issue or a pull request so we can discuss it!
+

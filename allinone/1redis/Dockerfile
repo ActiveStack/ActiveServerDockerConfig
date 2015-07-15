@@ -1,4 +1,4 @@
-FROM activestack/java
+FROM percero/java
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r redis && useradd -r -g redis redis
@@ -38,8 +38,8 @@ RUN mkdir -p /data && chown redis:redis /data
 VOLUME /data
 WORKDIR /data
 
-COPY redis-entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+#COPY redis-entrypoint.sh /redis-entrypoint.sh
+#ENTRYPOINT ["/redis-entrypoint.sh"]
 
 EXPOSE 6379
-CMD [ "redis-server" ]
+#CMD [ "redis-server" ]

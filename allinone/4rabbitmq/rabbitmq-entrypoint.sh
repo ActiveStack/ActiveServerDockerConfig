@@ -60,4 +60,5 @@ if [ "$1" = 'rabbitmq-server' ]; then
 	set -- gosu rabbitmq "$@"
 fi
 
+
 exec "$@"

@@ -1,4 +1,4 @@
-FROM activestack/mysql
+FROM percero/mysql
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r rabbitmq && useradd -r -d /var/lib/rabbitmq -m -g rabbitmq rabbitmq
@@ -42,9 +42,10 @@ VOLUME /var/lib/rabbitmq
 
 # add a symlink to the .erlang.cookie in /root so we can "docker exec rabbitmqctl ..." without gosu
 RUN ln -sf /var/lib/rabbitmq/.erlang.cookie /root/
+RUN ["/bin/sh", "-c", "bash"]
 
 COPY rabbitmq-entrypoint.sh /
-ENTRYPOINT ["/rabbitmq-entrypoint.sh"]
+#ENTRYPOINT ["/rabbitmq-entrypoint.sh"]
 
 EXPOSE 5672
-CMD ["rabbitmq-server"]
+#CMD ["rabbitmq-server"]
