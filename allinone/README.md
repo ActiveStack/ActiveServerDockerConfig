@@ -26,7 +26,7 @@
 * https://registry.hub.docker.com/_/rabbitmq/
 
 # Building all in one
-* [Setup](https://github.com/percero/docker/README) your machine for docker
+* [Setup](https://github.com/percero/docker/blob/master/README.md) your machine for docker
 * `./build-images.sh`
 
 # Push to hub.docker.com
