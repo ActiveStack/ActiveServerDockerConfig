@@ -7,8 +7,8 @@ The build containers are currently stored  in the [docker hub](https://hub.docke
 # Docker install directions
 Follow the install [OSX](https://docs.docker.com/installation/mac/) or [Windows](https://docs.docker.com/installation/windows/) directions  to setup your machine for docker
 
-# Run an ActiveStack Docker image
-`$ docker run -d -P -v $HOME/activestack:/opt/activestack --name allinone percero/activestack`
+# Example run of an ActiveStack docker image
+`$ docker run -d -P -v $HOME/activestack:/opt/activestack --name standalone percero/activestack`
 
 * create the activestack directory in your $HOME dir prior to mapping it above
 * `-d` run the container as a deamon

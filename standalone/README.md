@@ -35,7 +35,7 @@
 * `docker push percero/activestack`
 
 # Run the standalone image
-* `docker run -d -P -v $HOME/activestack:/opt/activestack --name activestack --oom-kill-disable -e MYSQL_ROOT_PASSWORD=q7CQhRLBGNTYK4 percero/gateway`
+* `docker run -d -P -v $HOME/activestack:/opt/activestack --name activestack -m 1G --memory-swap 2G --oom-kill-disable -e MYSQL_ROOT_PASSWORD=******** percero/gateway`
 
 # Attach to the standalone image
 * `docker exec -i -t activestack bash`
