@@ -18,5 +18,5 @@ Follow the install [OSX](https://docs.docker.com/installation/mac/) or [Windows]
 * `-v` maps VM's `$HOME/activestack  directory from the VM to the container
   * boot2docker shares your /Users directory with the VM but not the container. You need to use `-v` to tell it what to map
 
-# Attach to containers shell
+# Attach to containers bash shell
 `docker exec -i -t activestack bash`
