@@ -25,7 +25,7 @@
 * https://registry.hub.docker.com/_/mysql/
 * https://registry.hub.docker.com/_/rabbitmq/
 
-# Building all in one
+# Building all in one image
 * [Setup](https://github.com/percero/docker/blob/master/README.md) your machine for docker
 * `./build-images.sh`
 
@@ -33,3 +33,9 @@
 * Need percero login credentials
 * `docker login`
 * `docker push percero/activestack`
+
+# Run the standalone image
+* `docker run -d -P -v $HOME/activestack:/opt/activestack --name activestack --oom-kill-disable -e MYSQL_ROOT_PASSWORD=q7CQhRLBGNTYK4 percero/gateway`
+
+# Attach to the standalone image
+* `docker exec -i -t activestack bash`

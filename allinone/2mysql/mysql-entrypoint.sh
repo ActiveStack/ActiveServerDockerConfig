@@ -100,4 +100,8 @@ if [ "$1" = 'mysqld' ]; then
 	chown -R mysql:mysql "$DATADIR"
 fi
 
+if [ "$2" = 'supervisord' ]; then
+       supervisord -n
+fi
+
 #exec "$@"

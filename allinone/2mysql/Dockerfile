@@ -42,7 +42,7 @@ RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/my.cnf
 
 VOLUME /var/lib/mysql
 
-#COPY mysql-entrypoint.sh /mysql-entrypoint.sh
+COPY mysql-entrypoint.sh /mysql-entrypoint.sh
 #ENTRYPOINT ["/mysql-entrypoint.sh"]
 
 EXPOSE 3306
