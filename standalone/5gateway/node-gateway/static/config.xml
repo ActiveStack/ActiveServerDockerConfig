@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<services-config>
+
+	<logging>
+		<target class="mx.logging.targets.TraceTarget" level="Info">
+			<properties>
+				<prefix>[Web] </prefix>
+				<includeDate>false</includeDate>
+				<includeTime>false</includeTime>
+				<includeLevel>false</includeLevel>
+				<includeCategory>false</includeCategory>
+			</properties>
+			<filters>
+				<pattern>*</pattern>
+			</filters>
+		</target>
+		<!--
+		<target class="com.percero.logging.LoggingFileTarget" level="Info">
+			<properties>
+				<prefix>[Web] </prefix>
+				<includeDate>false</includeDate>
+				<includeTime>false</includeTime>
+				<includeLevel>false</includeLevel>
+				<includeCategory>false</includeCategory>
+			</properties>
+			<filters>
+				<pattern>*</pattern>
+			</filters>
+		</target>
+		-->
+	</logging>
+</services-config>

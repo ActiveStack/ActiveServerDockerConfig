@@ -1,0 +1,24 @@
+{
+  "name": "node-gateway",
+  "version": "1.0.0",
+  "description": "Handles Percero socket.io clients and routes requests/responses to/from agents via RabbitMQ.",
+  "dependencies" : {
+    "amqp": "0.1.x",
+    "connect": "2.4.x",
+    "ejs": "0.8.x",
+    "express": "3.0.x",
+    "node-properties-parser": "0.0.2",
+    "socket.io": "git://github.com/curb47/socket.io.git",
+    "socket.io-client": "0.9.9",
+    "winston": "0.6.x",
+    "redis": "*"
+  },
+  "devDependencies": {
+    "webkit-devtools-agent": "*"
+  },
+  "bundleDependencies": [
+  ],
+  "engine": {
+    "node": ">=0.8.5"
+  }
+}

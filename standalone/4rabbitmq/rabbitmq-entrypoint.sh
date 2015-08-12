@@ -58,7 +58,13 @@ if [ "$1" = 'rabbitmq-server' ]; then
 
 	chown -R rabbitmq /var/lib/rabbitmq
 	set -- gosu rabbitmq "$@"
+        
+        /redis-entrypoint.sh redis-server
+        /redis-entrypoint.sh redis-server
+        /redis-entrypoint.sh redis-server
 fi
+
+
 
 
 exec "$@"

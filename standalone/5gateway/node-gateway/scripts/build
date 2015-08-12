@@ -1,0 +1,72 @@
+#!/bin/bash
+# 
+# Control Script for the PF Server
+#
+# Setup some colors
+# Text color variables
+strong=$(tput bold)             # Bold
+error=$(tput setaf 1)           #  red
+good=$(tput setaf 2)            #  green
+warn=$(tput setaf 3)            #  yellow
+info=$(tput setaf 7)            #  gray
+heading=${strong}$(tput setaf 6)         #  white
+reset=$(tput sgr0)              # Reset
+function fatal {
+    echo "${error}$1"
+    echo "Failed${reset}"
+    echo 
+    exit 1
+}
+function ok {
+    echo "${good}Ok"
+}
+
+syncjar="PSIGlobal_SyncAgentListener-1.3.23-SNAPSHOT-onejar.jar"
+syncjarVersion="1.1.0"
+authjar="AuthAgentListener-1.1.12-onejar.jar"
+authjarVersion="1.1.0"
+bindir="/opt/pfserver/bin"
+mkdir -p $bindir 
+
+echo "${info}Building PF Server"
+echo 
+
+echo -n "${info}Building SyncAgent"
+cd $bindir
+wget --user=nodejs --password='Install#1' http://artifactory.psiglobaldb.com:8081/artifactory/libs-release-local/com/percero/apps/PSIGlobal_SyncAgentListener/${syncjarVersion}.one/${syncjar}
+#cd "/opt/pfserver/java/SyncAgentListener"
+#mvn clean package
+#if [ $? -eq 1 ]
+#then
+#    fatal "mvn build failed"
+#else
+#    cp -f /opt/pfserver/java/SyncAgentListener/target/$syncjar $bindir/$syncjar
+#    if [ $? -eq 1 ]
+#    then
+#	fatal "Couldn't copy Sync jar"
+#    fi	   
+#fi
+ok
+
+echo -n "${info}Building AuthAgent"
+cd $bindir
+wget --user=nodejs --password='Install#1' http://artifactory.psiglobaldb.com:8081/artifactory/libs-release-local/com/percero/agents/AuthAgentListener/${authjarVersion}.one/${authjar}
+#cd "/opt/pfserver/java/AuthAgentListener-1.1.12-onejar.jar"
+#mvn clean package
+#if [ $? -eq 1 ]
+#then
+#    fatal "mvn build failed"
+#else
+#    cp -f /opt/pfserver/java/AuthAgentListener/target/$authjar $bindir/$authjar
+#    if [ $? -eq 1 ]
+#    then
+#	fatal "Couldn't copy Auth jar"
+#    fi	   
+#fi
+ok
+
+echo
+echo "${good}Build Succcessful"
+echo "${reset}"
+
+	

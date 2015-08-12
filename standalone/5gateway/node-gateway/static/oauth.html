@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+	<head>
+	</head>
+	<body>
+		<script type="text/javascript">
+			window.onload = function() {
+				var paramString = window.location.search.substr(1);
+				if (window.opener != null) {
+					window.opener.oauthCallback(paramString);
+				}
+			}
+		</script>
+	</body>
+</html>
+
+
+
