@@ -1,7 +1,6 @@
 #!/bin/bash
 #set -e
 
-#set -x
 #redis host
 sed -i "s/^redis.host=.*$/redis.host=$REDIS_PORT_6379_TCP_ADDR/g" /etc/pfserver/env.properties
 #sed -i "s/^redis.port=.*$/redis.port=$REDIS_PORT_6379_TCP_PORT/g" /etc/pfserver/env.properties
@@ -17,13 +16,22 @@ sed -i "s/^databaseProject.host=.*$/databaseProject.host=$MYSQL_PORT_3306_TCP_AD
 
 cp /etc/pfserver/env.properties /code
 chmod 755 /etc/pfserver/env.properties
-ls -lat /etc/pfserver/
-printf "%s" "$(</etc/pfserver/env.properties)"
+#printf "%s" "$(</etc/pfserver/env.properties)"
 
 #mysql db setup
 mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD" < /schema.sql
 
-$1 $2 $3 $4 >> /tmp/taskmanager.log 2>> /tmp/taskmanager.log
+freemem=`free -m | grep Mem | awk '{print $2}'`
+eachMem=`echo "$freemem * 0.25" | bc`
+eachMem=`echo ${eachMem%.*}`
+eachMemMax=`echo "$freemem * 0.95" | bc`
+eachMemMax=`echo ${eachMemMax%.*}`
+jarMem="-Xms${eachMem}M -Xmx${eachMemMax}M"
 
-#set +x
+sleep 6 
+set -x
+
+$1 $2 $3 ${jarMem} $4 >> /tmp/taskmanager.log 2>> /tmp/taskmanager.log
+
+set +x
 

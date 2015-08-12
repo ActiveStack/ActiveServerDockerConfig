@@ -1,5 +1,5 @@
 activestack:
-  build: ./node-gateway
+  image: anazakellc/nodegateway:0.0.1
   ports:
    - "8080:8080"
   volumes:
@@ -9,7 +9,7 @@ activestack:
    - mysql
    - rabbitmq
 taskmanager:
-  build: TaskManager
+  image: anazakellc/taskmanager:0.0.1
   volumes:
    - ./taskmanager:/code
   links:
