@@ -1,0 +1,29 @@
+#!/bin/bash
+#set -e
+
+#set -x
+#redis host
+sed -i "s/^redis.host=.*$/redis.host=$REDIS_PORT_6379_TCP_ADDR/g" /etc/pfserver/env.properties
+#sed -i "s/^redis.port=.*$/redis.port=$REDIS_PORT_6379_TCP_PORT/g" /etc/pfserver/env.properties
+
+#rabbit host
+sed -i "s/^gateway.rabbitmq.host=.*$/gateway.rabbitmq.host=$RABBITMQ_PORT_5672_TCP_ADDR/g" /etc/pfserver/env.properties
+#sed -i "s/^rabbitmq.port=.*$/rabbitmq.port=$RABBITMQ_PORT_5672_TCP_PORT/g" /etc/pfserver/env.properties
+
+#mysql connection configs
+sed -i "s/^databaseAuth.host=.*$/databaseAuth.host=$MYSQL_PORT_3306_TCP_ADDR/g" /etc/pfserver/env.properties
+sed -i "s/^databaseProject.host=.*$/databaseProject.host=$MYSQL_PORT_3306_TCP_ADDR/g" /etc/pfserver/env.properties
+
+
+cp /etc/pfserver/env.properties /code
+chmod 755 /etc/pfserver/env.properties
+ls -lat /etc/pfserver/
+printf "%s" "$(</etc/pfserver/env.properties)"
+
+#mysql db setup
+mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD" < /schema.sql
+
+$1 $2 $3 $4 >> /tmp/taskmanager.log 2>> /tmp/taskmanager.log
+
+#set +x
+

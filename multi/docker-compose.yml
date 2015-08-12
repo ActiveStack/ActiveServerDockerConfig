@@ -1,0 +1,30 @@
+activestack:
+  build: ./node-gateway
+  ports:
+   - "8080:8080"
+  volumes:
+   - ./node-gateway:/code
+  links:
+   - redis
+   - mysql
+   - rabbitmq
+taskmanager:
+  build: TaskManager
+  volumes:
+   - ./taskmanager:/code
+  links:
+   - redis
+   - mysql
+   - rabbitmq
+redis:
+  image: redis:2.8
+  volumes:
+    - /data/redis:/data
+mysql:
+  image: mysql:5.6
+  environment:
+    MYSQL_ROOT_PASSWORD: gCvp8nN2
+  volumes:
+    - /data/mysql:/var/lib/mysql
+rabbitmq:
+  image: rabbitmq:3.4 
