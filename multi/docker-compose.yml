@@ -29,8 +29,6 @@ mysql:
    - "3306:3306"
   environment:
     MYSQL_ROOT_PASSWORD: gCvp8nN2
-  volumes:
-    - /data/mysql:/var/lib/mysql
 rabbitmq:
   image: rabbitmq:3.4 
   ports:

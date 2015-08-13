@@ -28,10 +28,13 @@ eachMemMax=`echo "$freemem * 0.95" | bc`
 eachMemMax=`echo ${eachMemMax%.*}`
 jarMem="-Xms${eachMem}M -Xmx${eachMemMax}M"
 
-sleep 6 
+sleep 12 
 set -x
+touch /tmp/taskmanager.log
 
-$1 $2 $3 ${jarMem} $4 >> /tmp/taskmanager.log 2>> /tmp/taskmanager.log
+$1 $2 $3 ${jarMem} $4 $5
+#>> /tmp/taskmanager.log 2>> /tmp/taskmanager.log &
 
+printf "%s" "$(</tmp/taskmanager.log)"
 set +x
 
