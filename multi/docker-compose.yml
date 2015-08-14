@@ -1,22 +1,22 @@
-activestack:
-  build: ./node-gateway
+gateway:
+  build: gateway
   ports:
    - "8080:8080"
   volumes:
-   - ./node-gateway:/code
+   - gateway:/code
   links:
    - redis
    - mysql
    - rabbitmq
-taskmanager:
-  build: TaskManager
+syncengine:
+  build: syncengine 
   volumes:
-   - ./taskmanager:/code
+   - syncengine:/code
   links:
    - redis
    - mysql
    - rabbitmq
-   - activestack
+   - gateway
 redis:
   image: redis:2.8
   ports:
