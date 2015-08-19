@@ -9,15 +9,20 @@ Directions on how to run the ActiveStack Docker containers
  * [docker-compose](https://docs.docker.com/compose/install)
 
 # Run the images images
-* Clone ActiveStack Docker
+0. Run "Docker Quickstart Terminal".  In the Docker terminal:
+2. Clone ActiveStack Docker
  * `git clone git@github.com:percero/docker.git`
-* Change directories to the docker
+3. Change directories to the docker
  * `cd docker`
-* Set your environment variables to talk to your current docker host
- * `eval "$(docker-machine env dev)"` - if using docker-machine where dev is the name of your docker machine
- * If using kinematic, open the docker quickstart terminal and run commands from there
-* Create a docker host on your machine
+4. Create a docker host on your machine
  * `docker-compose up`
 
-# Convert docker machine
-* If you previously used boot2docker to start your docker host shut it down before using a different method.
+## Helpful Commands
+From within a Docker terminal:
+* `docker-machine ip dev` - To see which ports the containers are running on
+* `docker ps` - Lists all running containers
+* `docker attach <container-id>` - To attach to a particular running container
+
+## Other Notes
+* The database files are stored within the MySQL Docker container, which could be useful to create a container with seed data for dev.
+
