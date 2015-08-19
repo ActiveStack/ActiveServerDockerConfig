@@ -28,6 +28,7 @@ jarMem="-Xms${eachMem}M -Xmx${eachMemMax}M"
 
 sleep 12 
 set -x
+#mysql db setup
 touch /tmp/syncengine.log
 
 $1 $2 $3 ${jarMem} $4 $5
