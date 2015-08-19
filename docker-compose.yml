@@ -1,5 +1,5 @@
 gateway:
-  image: activestackengine/gateway
+  image: activestack/gateway
   ports:
    - "8080:8080"
   volumes:
@@ -9,7 +9,7 @@ gateway:
    - mysql
    - rabbitmq
 syncengine:
-  image: activestackengine/syncengine
+  image: activestack/syncengine
   volumes:
    - syncengine:/code
   links:

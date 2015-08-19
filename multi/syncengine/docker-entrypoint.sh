@@ -3,11 +3,9 @@
 
 #redis host
 sed -i "s/^redis.host=.*$/redis.host=$REDIS_PORT_6379_TCP_ADDR/g" /etc/pfserver/env.properties
-#sed -i "s/^redis.port=.*$/redis.port=$REDIS_PORT_6379_TCP_PORT/g" /etc/pfserver/env.properties
 
 #rabbit host
 sed -i "s/^gateway.rabbitmq.host=.*$/gateway.rabbitmq.host=$RABBITMQ_PORT_5672_TCP_ADDR/g" /etc/pfserver/env.properties
-#sed -i "s/^rabbitmq.port=.*$/rabbitmq.port=$RABBITMQ_PORT_5672_TCP_PORT/g" /etc/pfserver/env.properties
 
 #mysql connection configs
 sed -i "s/^databaseAuth.host=.*$/databaseAuth.host=$MYSQL_PORT_3306_TCP_ADDR/g" /etc/pfserver/env.properties
@@ -30,11 +28,11 @@ jarMem="-Xms${eachMem}M -Xmx${eachMemMax}M"
 
 sleep 12 
 set -x
-touch /tmp/taskmanager.log
+touch /tmp/syncengine.log
 
 $1 $2 $3 ${jarMem} $4 $5
-#>> /tmp/taskmanager.log 2>> /tmp/taskmanager.log &
+#>> /tmp/syncengine.log 2>> /tmp/syncengine.log &
 
-printf "%s" "$(</tmp/taskmanager.log)"
+printf "%s" "$(</tmp/syncengine.log)"
 set +x
 

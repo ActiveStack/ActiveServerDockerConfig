@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS TaskManager;
-CREATE DATABASE IF NOT EXISTS TaskManagerAuthManager;
-GRANT ALL ON `TaskManager`.* TO 'taskmanager'@'%' IDENTIFIED BY 'Welcome#1';
-GRANT ALL ON `TaskManagerAuthManager`.* TO 'taskmanager'@'%' IDENTIFIED BY 'Welcome#1';
+CREATE DATABASE IF NOT EXISTS SyncEngine;
+CREATE DATABASE IF NOT EXISTS SyncEngineAuthManager;
+GRANT ALL ON `SyncEngine`.* TO 'taskmanager'@'%' IDENTIFIED BY 'Welcome#1';
+GRANT ALL ON `SyncEngineAuthManager`.* TO 'taskmanager'@'%' IDENTIFIED BY 'Welcome#1';
 FLUSH PRIVILEGES;
 

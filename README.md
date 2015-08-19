@@ -13,5 +13,11 @@ Directions on how to run the ActiveStack Docker containers
  * `git clone git@github.com:percero/docker.git`
 * Change directories to the docker
  * `cd docker`
+* Set your environment variables to talk to your current docker host
+ * `eval "$(docker-machine env dev)"` - if using docker-machine where dev is the name of your docker machine
+ * If using kinematic, open the docker quickstart terminal and run commands from there
 * Create a docker host on your machine
  * `docker-compose up`
+
+# Convert docker machine
+* If you previously used boot2docker to start your docker host shut it down before using a different method.
