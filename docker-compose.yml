@@ -8,10 +8,10 @@ gateway:
    - redis
    - mysql
    - rabbitmq
-syncengine:
-  image: activestack/syncengine
+activeserver:
+  image: activestack/activeserver
   volumes:
-   - syncengine:/code
+   - activeserver:/code
   links:
    - redis
    - mysql

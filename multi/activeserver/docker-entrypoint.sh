@@ -14,7 +14,7 @@ sed -i "s/^databaseProject.host=.*$/databaseProject.host=$MYSQL_PORT_3306_TCP_AD
 
 cp /etc/pfserver/env.properties /code
 chmod 755 /etc/pfserver/env.properties
-#printf "%s" "$(</etc/pfserver/env.properties)"
+printf "%s" "$(</etc/pfserver/env.properties)"
 
 #mysql db setup
 mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD" < /schema.sql
@@ -29,11 +29,11 @@ jarMem="-Xms${eachMem}M -Xmx${eachMemMax}M"
 sleep 12 
 set -x
 #mysql db setup
-touch /tmp/syncengine.log
+touch /tmp/activeserver.log
 
 $1 $2 $3 ${jarMem} $4 $5
-#>> /tmp/syncengine.log 2>> /tmp/syncengine.log &
+#>> /tmp/activeserver.log 2>> /tmp/activeserver.log &
 
-printf "%s" "$(</tmp/syncengine.log)"
+printf "%s" "$(</tmp/activeserver.log)"
 set +x
 

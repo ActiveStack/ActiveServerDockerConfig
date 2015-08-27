@@ -9,10 +9,10 @@ gateway:
    - redis
    - mysql
    - rabbitmq
-syncengine:
-  build: syncengine 
+activeserver:
+  build: activeserver 
   volumes:
-   - syncengine:/code
+   - activeserver:/code
   links:
    - redis
    - mysql
