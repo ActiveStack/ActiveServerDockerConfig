@@ -13,8 +13,8 @@ Directions on how to run the ActiveStack Docker containers
 2. Clone ActiveStack Docker
  * `git clone git@github.com:activestack/ActiveServerDockerConfig.git`
 
-3. Change directories to the docker
- * `cd docker`
+3. Change directories to ActiveServerDockerConfig
+ * `cd ActiveServerDockerConfig`
 4. Create a docker host on your machine
  * `docker-compose up`
 
