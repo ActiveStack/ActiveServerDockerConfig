@@ -31,7 +31,34 @@ mysql:
   environment:
     MYSQL_ROOT_PASSWORD: gCvp8nN2
 rabbitmq:
-  image: rabbitmq:3.4 
+  image: harbur/rabbitmq-cluster
+  hostname: rabbitmq
+  environment:
+    - ERLANG_COOKIE=64cTARnG
   ports:
-   - "5672:5672"
-
+    - "5672:5672"
+    - "15672:15672"
+rabbitmq2:
+  image: harbur/rabbitmq-cluster
+  hostname: rabbitmq2
+  links:
+    - rabbitmq
+  environment:
+    - ERLANG_COOKIE=64cTARnG
+    - CLUSTER_WITH=rabbitmq
+    - ENABLE_RAM=true
+    - RAM_NODE=true
+  ports:
+    - "5673:5672"
+    - "15673:15672"
+rabbitmq3:
+  image: harbur/rabbitmq-cluster
+  hostname: rabbitmq3
+  links:
+    - rabbitmq
+    - rabbitmq2
+  environment:
+    - ERLANG_COOKIE=64cTARnG
+    - CLUSTER_WITH=rabbitmq
+  ports:
+    - "5674:5672"
