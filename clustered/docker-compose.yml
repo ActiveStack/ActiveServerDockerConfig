@@ -33,7 +33,7 @@ mysql:
   environment:
     MYSQL_ROOT_PASSWORD: gCvp8nN2
   volumes:
-    mysql/conf:/etc/mysql/conf.d
+    - ./mysql/conf:/etc/mysql/conf.d
 rabbitmq:
   image: harbur/rabbitmq-cluster
   hostname: rabbitmq
