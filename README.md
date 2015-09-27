@@ -14,15 +14,17 @@ Directions on how to run the ActiveStack Docker containers
  * `git clone git@github.com:activestack/ActiveServerDockerConfig.git`
 
 3. Change directories to ActiveServerDockerConfig
- * `cd ActiveServerDockerConfig`
-4. Create a docker host on your machine
- * `docker-compose up`
+ * `cd ActiveServerDockerConfig/simple` for single docker instances for each component (activeserver, mysql, redis, rabbitmq)
+ * `cd ActiveServerDockerConfig/clustred` for some components in a cluster (currently rabbitmq. Others comming soon ...)
+4. Start the containers 
+ * `docker-compose up` foreground
+ * `docker-compose up -d` daemon
 
 ## Helpful Commands
 From within a Docker terminal:
 * `docker-machine ip dev` - To see which ports the containers are running on
 * `docker ps` - Lists all running containers
-* `docker attach <container-id>` - To attach to a particular running container
+* ` sudo docker exec -i -t <container-d>  bash` - To attach to bash in a particular running container
 
 ## Other Notes
 * The database files are stored within the MySQL Docker container, which could be useful to create a container with seed data for dev.
