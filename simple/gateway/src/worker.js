@@ -1,89 +1,20 @@
 'use strict';
 
-var fs = require('fs');
-var https = require('https');
-var http = require('http');
-
 module.exports = GatewayWorker;
 
-function GatewayWorker(logger, properties){
-    this.logger = logger;
-    this.properties = properties;
-    this.useSsl = false;
-    this.ssl = null;
-    this.httpServer = null;
+function GatewayWorker(){
+    this.logger = null;
+    this.properties = null;
     this.currentClientQueueLength = 0;
     this.exiting = false;
     this.restartOnClientQueueEmpty = false;
     this.stopOnClientQueueEmpty = false;
-
-    this.init();
 }
 
-GatewayWorker.prototype.init = function(){
-    this.initSSL();
-    this.initHttpServer();
-    this.initServices();
-};
-
-GatewayWorker.prototype.initHttpServer = function(){
-    var httpServer;
-    if(!this.useSsl){
-        httpServer = http.createServer(this.app);
-    }
-    else {
-        httpServer = https.createServer(this.ssl, this.app);
-    }
-
-    httpServer.on('error', this.createErrorHandler('HTTP Server'));
-    this.httpServer = httpServer;
-};
-
-GatewayWorker.prototype.initServices = function(){
-    var Gateway = require('./service/gateway');
-    //var Upload = require('./service/upload');
-
-    var callbacks = {
-        createErrorHandler: this.createErrorHandler.bind(this),
-        catchAndWarn: this.catchAndWarn.bind(this),
-        isExiting: this.isExiting.bind(this),
-        sendMessage: this.receiveMessage.bind(this)
-    };
-
-    this.services = [
-        new Gateway(this.httpServer, this.properties, this.ssl, this.logger, callbacks)
-    ];
-};
-
-GatewayWorker.prototype.initSSL = function(){
-    var useSsl = this.properties['frontend.ssl'];
-    if (useSsl && (useSsl === 'true' || useSsl === 't' || useSsl === '1' || useSsl === 1)) {
-        useSsl = true;
-    }
-    else {
-        useSsl = false;
-    }
-
-    var ssl;
-    if (useSsl) {
-        try {
-            var privateKey = fs.readFileSync(__dirname + '/../ssl/psiinformatics.com.private.key').toString();
-            var certificate = fs.readFileSync(__dirname + '/../ssl/psiinformatics.com.crt').toString();
-            var ca = fs.readFileSync(__dirname + '/../ssl/psiinformatics.com.csr').toString();
-            ssl = {
-                key: privateKey,
-                cert: certificate,
-                ca: ca
-            };
-        } catch (error) {
-            useSsl = false;
-            this.logger.info('NOT using SSL');
-            this.logger.error(error);
-        }
-    }
-
-    this.ssl = ssl;
-    this.useSsl = useSsl;
+GatewayWorker.prototype.inject = function(prefixedLogger, properties, gateway){
+    this.logger = prefixedLogger;
+    this.properties = properties;
+    this.gateway = gateway;
 };
 
 GatewayWorker.prototype.isExiting = function(){
@@ -107,7 +38,7 @@ GatewayWorker.prototype.checkMemoryUsage = function () {
     }
 };
 
-GatewayWorker.prototype.receiveMessage = function(message) {
+GatewayWorker.prototype.sendMessage = function(message) {
     this.logger.debug('Received message from service');
     if (message) {
         if (message.command === 'clientQueueLength') {
@@ -124,86 +55,79 @@ GatewayWorker.prototype.receiveMessage = function(message) {
     }
 };
 
-GatewayWorker.prototype.onProcessMessage = function (msg) {
-    // Listen for messages from the master process (if any exists).
-    if (msg.cmd === 'restart') {
-        var type = msg.type;
-        var data = parseInt(msg.data);
-        this.logger.info('server received restart message: ' + type);
-        if (type.toLowerCase() === 'on_client_queue_empty') {
 
-            this.services.forEach(function (service) {
-                service.handleShutdown(type);
-            });
+GatewayWorker.prototype.onMessageStopOrRestart = function(msg){
+    var cmd = msg.cmd;
+    var type = msg.type;
+    var data = parseInt(msg.data);
+    this.logger.info('server received '+msg.cmd+' message: ' + type);
+    if (type.toLowerCase() === 'on_client_queue_empty') {
 
-            if (this.currentClientQueueLength <= 0) {
-                process.send({command: 'restart'});
-            }
-            else {
+        this.gateway.onShutdown(type);
+        if (this.currentClientQueueLength <= 0) {
+            process.send({command: cmd});
+        }
+        else {
+            if(cmd == 'stop')
+                this.stopOnClientQueueEmpty = true;
+            else if(cmd == 'restart')
                 this.restartOnClientQueueEmpty = true;
 
-                if (data) {
-                    // Set the timeout to restart this server process.
-                    this.logger.info('Restart request received. ' + this.currentClientQueueLength + ' client(s) currently connected. Setting restart timeout to ' + data);
-                    setTimeout(function () {
-                        this.logger.warn('Server Restart timeout, restarting process with ' + this.currentClientQueueLength + ' connected client(s)');
-                        process.send({command: 'restart'});
-                    }.bind(this), data);
-                }
+            if (data) {
+                // Set the timeout to restart this server process.
+                this.logger.info(cmd+' request received. ' + this.currentClientQueueLength + ' client(s) currently connected. Setting '+cmd+' timeout to ' + data);
+                setTimeout(function () {
+                    this.logger.warn('Server '+cmd+' timeout, stopping process with ' + this.currentClientQueueLength + ' connected client(s)');
+                    process.send({command: cmd});
+                }.bind(this), data);
             }
         }
-        else {
-            process.send({command: 'restart'});
-        }
-    }
-    else if (msg.cmd === 'stop') {
-        var type = msg.type;
-        var data = parseInt(msg.data);
-        this.logger.info('server received stop message: ' + type);
-        if (type.toLowerCase() === 'on_client_queue_empty') {
-
-            this.services.forEach(function (service) {
-                service.handleShutdown(type);
-            });
-
-            if (this.currentClientQueueLength <= 0) {
-                process.send({command: 'stop'});
-            }
-            else {
-                this.stopOnClientQueueEmpty = true;
-
-                if (data) {
-                    // Set the timeout to restart this server process.
-                    this.logger.info('Stop request received. ' + this.currentClientQueueLength + ' client(s) currently connected. Setting stop timeout to ' + data);
-                    setTimeout(function () {
-                        this.logger.warn('Server Stop timeout, stopping process with ' + this.currentClientQueueLength + ' connected client(s)');
-                        process.send({command: 'stop'});
-                    }.bind(this), data);
-                }
-            }
-        }
-        else {
-            process.send({command: 'stop'});
-        }
-    }
-    else if (msg.cmd.toLowerCase() === 'loglevel') {
-        throw new Error('NOT IMPLEMENTED');
-        //var logLevel = msg.data;
-        //this.logger.info('Setting LogLevel to ' + logLevel);
-        //logger.remove(winston.transports.Console);
-        //logger.add(winston.transports.Console, {level: logLevel});
-    }
-    else if (msg.cmd.toLowerCase() === 'clientmessageresendinterval') {
-        var clientMessageResendInterval = msg.data;
-        this.logger.info('Setting clientMessageResendInterval to ' + clientMessageResendInterval);
-        this.properties['frontend.clientMessageResendInterval'] = clientMessageResendInterval;
-    }
-    else if (msg.cmd.toLowerCase() === 'clientcount') {
-        this.logger.info('Getting clientCount: ' + this.currentClientQueueLength + ' client(s) currently connected');
-        process.send({command: 'clientCount', data: this.currentClientQueueLength});
     }
     else {
-        this.logger.info('server received unknown message: ' + JSON.stringify(msg));
+        process.send({command: cmd});
+    }
+};
+
+GatewayWorker.prototype.onMessageLogLevel = function(msg){
+    throw new Error('NOT IMPLEMENTED');
+    //var logLevel = msg.data;
+    //this.logger.info('Setting LogLevel to ' + logLevel);
+    //logger.remove(winston.transports.Console);
+    //logger.add(winston.transports.Console, {level: logLevel});
+};
+
+GatewayWorker.prototype.onMessageCMSI = function(msg){
+    var clientMessageResendInterval = msg.data;
+    this.logger.info('Setting clientMessageResendInterval to ' + clientMessageResendInterval);
+    this.properties['frontend.clientMessageResendInterval'] = clientMessageResendInterval;
+};
+
+GatewayWorker.prototype.onMessageClientCount = function(msg){
+    this.logger.info('Getting clientCount: ' + this.currentClientQueueLength + ' client(s) currently connected');
+    process.send({command: 'clientCount', data: this.currentClientQueueLength});
+};
+
+GatewayWorker.prototype.onProcessMessage = function (msg) {
+    var command = msg.cmd.toLowerCase();
+    switch(command){
+        case 'restart':
+            this.onMessageStopOrRestart(msg);
+            break;
+        case 'stop':
+            this.onMessageStopOrRestart(msg);
+            break;
+        case 'loglevel':
+            this.onMessageLogLevel(msg);
+            break;
+        case 'clientmessageresendinterval':
+            this.onMessageCMSI(msg);
+            break;
+        case 'clientcount':
+            this.onMessageClientCount(msg);
+            break;
+        default:
+            this.logger.info('server received unknown message: ' + JSON.stringify(msg));
+            break;
     }
 };
 
@@ -218,13 +142,7 @@ GatewayWorker.prototype.createErrorHandler = function createErrorHandler(source)
             });
         }
 
-        this.catchAndWarn('HTTP Server', function () {
-            this.httpServer.close();
-        });
-
-        this.services.forEach(function (service) {
-            service.handleError(error, source);
-        });
+        this.gateway.handleError(error, source);
 
         this.exiting = true;
     }.bind(this);
@@ -263,14 +181,7 @@ GatewayWorker.prototype.start = function() {
     this.startHeartbeartPoller();
     this.startMemoryUsagePoller();
 
-    this.httpServer.listen(
-        this.properties['frontend.port'],
-        this.properties['frontend.host'],
-        function () {
-            this.logger.info('Worker ready on http' + (this.useSsl ? 's' : '') + '://' +
-            (this.properties['frontend.host'] || '*') + ':' + (this.properties['frontend.port']));
-        }.bind(this)
-    );
+    this.gateway.start();
 };
 
 

@@ -13,8 +13,11 @@ module.exports = {
      */
     create: function(properties){
         properties = properties || {};
+        config = {
+            'frontend.session_secret':'moo cow'
+        };
         var chance = new Chance();
-        var session = new Session(loggerFactory.create());
+        var session = new Session(loggerFactory.create(), config);
         session.userId   = chance.string();
         session.clientId = chance.string();
         session.existingClientId = chance.string();

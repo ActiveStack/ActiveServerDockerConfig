@@ -8,6 +8,7 @@ function MockLogger(){
     this.warn = loggerFunc;
     this.verbose = loggerFunc;
     this.error = loggerFunc;
+    this.info = loggerFunc;
     this.extendPrefix = function(){ return this; }
 }
 

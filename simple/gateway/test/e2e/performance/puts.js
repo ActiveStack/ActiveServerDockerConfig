@@ -422,11 +422,11 @@ function createWorker(forceCreate) {
     if (workerCount <= workers.length) {
         if (!forceCreate) {
             // Only start another worker if forceCreate OR we have not yet reached our max number of worker threads.
-            console.log('Reached max num workers, ABORTING createWorker');
+            console.log('Reached max num workers, ABORTING createWorkerProcess');
             return;
         }
         else {
-            console.log('Reached max num workers, FORCE createWorker');
+            console.log('Reached max num workers, FORCE createWorkerProcess');
         }
     }
 

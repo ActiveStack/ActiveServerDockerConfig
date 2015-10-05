@@ -1,16 +1,40 @@
 var GatewayServer = require('./server'),
     AppContext = require('injecterooski').AppContext,
-    PrefixedLogger = require('./logging/prefixed_logger');
+    PrefixedLogger = require('./logging/prefixed_logger'),
+    HttpServerFactory = require('./factory/http_server_factory'),
+    RabbitMQFactory = require('./factory/rabbitmq_factory'),
+    RedisStoreFactory = require('./factory/redis_store_factory'),
+    SocketIOFactory = require('./factory/socketio_factory'),
+    Properties = require('./config/properties'),
+    SSLConfig = require('./config/ssl_config'),
+    GatewayWorker = require('./worker'),
+    Gateway = require('./service/gateway'),
+    SessionFactory = require('./factory/session_factory');
 
-var appContext = new AppContext();
+function GatewayServerApplication(){}
 
-var server = new GatewayServer();
+GatewayServerApplication.prototype.run = function(configFile){
+    var appContext = new AppContext();
 
-appContext.register([
-    server,
-    new PrefixedLogger()
-]);
+    var server = new GatewayServer();
 
-appContext.resolve();
+    appContext.register([
+        server,
+        new PrefixedLogger(),
+        new HttpServerFactory(),
+        new RabbitMQFactory(),
+        new RedisStoreFactory(),
+        new SocketIOFactory(),
+        new Properties(configFile),
+        new SSLConfig(),
+        new GatewayWorker(),
+        new Gateway(),
+        new SessionFactory()
+    ]);
 
-server.start();
+    appContext.resolve();
+
+    server.start();
+};
+
+module.exports = GatewayServerApplication;

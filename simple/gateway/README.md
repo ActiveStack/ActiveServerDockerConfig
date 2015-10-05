@@ -1,19 +1,7 @@
 ActiveStack Gateway
 ===================
 
-TODO
-----
-- [ ] Change all references from Percero to ActiveStack
-- [x] Package for NPM
-- [x] Build CLI for utility type things (redis stuff mostly)
-- [x] Refactor for DI
-- [ ] Unit testing
-- [ ] Refactor SSL stuff into config
-- [x] Setup defaults so config file not required
-- [x] Refactor out agents pattern
-- [ ] Allow custom configuration with custom config file 
-- [ ] Refactor session secret into config file
-- [ ] Get running on Travis/CircleCI (and put pretty buttons on the readme)
+[![Circle CI](https://circleci.com/gh/ActiveStack/gateway/tree/master.svg?style=svg)](https://circleci.com/gh/ActiveStack/gateway/tree/master)
 
 Introduction
 ------------
@@ -26,7 +14,7 @@ Installation
 
 ### Prerequisites
 
-* Node >= 0.10
+* Node = 0.10.x
 * Redis
 * RabbitMQ
 

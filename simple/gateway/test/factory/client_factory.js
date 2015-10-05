@@ -1,6 +1,7 @@
 var loggerFactory   = require('./logger_factory'),
     GatewayClient   = require('../../src/service/client'),
-    Chance          = require('chance');
+    Chance          = require('chance'),
+    sessionFactory  = require('./session_factory');
 
 /**
  * Client factory for making testing easier
@@ -18,7 +19,8 @@ module.exports = {
         // Mock a bunch of objects it depends on.
         var socket = {
             on: function(){},
-            emit: function(){}
+            emit: function(){},
+            id: chance.string()
         };
         var exchange = {
             publish: function(){}
@@ -36,7 +38,7 @@ module.exports = {
         var logger = loggerFactory.create();
         var config = {};
 
-        var client = new GatewayClient(socket, exchange, rabbitmq, logger, config);
+        var client = new GatewayClient(socket, exchange, rabbitmq, logger, config, sessionFactory);
 
         // Now overwrite with the properties passed in
         for(var key in properties){

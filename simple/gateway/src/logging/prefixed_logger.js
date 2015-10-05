@@ -1,5 +1,3 @@
-'use strict';
-
 var winston = require('winston');
 
 module.exports = PrefixedLogger;
@@ -12,32 +10,30 @@ module.exports = PrefixedLogger;
  * instance.
  */
 function PrefixedLogger(prefix) {
+    this.prefix = prefix?prefix:process.pid;
+}
 
-    var logger = new winston.Logger({
+PrefixedLogger.prototype.inject = function(properties){
+    this.properties = properties;
+}
+
+PrefixedLogger.prototype.init = function(){
+     logger = new winston.Logger({
         transports: [
-            new winston.transports.Console({ level: 'info' })
+            new winston.transports.Console({ level: this.properties['frontend.logLevel'], timestamp: true })
         ],
         levels: { silly: 0, debug: 1, verbose: 2, info: 3, warn: 4, error: 5 }
     });
-
-    this.prefix = prefix?prefix:process.pid;
-    //this.__proto__ = logger;
 
     /**
      * Constructs the logging functions based on the levels
      */
     Object.keys(logger.levels).forEach(function(level) {
         this[level] = function() {
-            var newDate = new Date();
-            arguments[0] = newDate.getFullYear() + "-" +
-            (newDate.getMonth()+1) + "-" +
-            newDate.getDate() + " " +
-            newDate.getHours() + ":" +
-            newDate.getMinutes() + ":" +
-            newDate.getSeconds() + "," +
-            newDate.getMilliseconds() + " " +
-            this.prefix + ' > ' +
-            arguments[0];
+            arguments[0] =
+                getFileAndLine() + ' - ' +
+                this.prefix + ' > ' +
+                arguments[0];
 
             logger[level].apply(logger, arguments);
         };
@@ -45,5 +41,24 @@ function PrefixedLogger(prefix) {
 }
 
 PrefixedLogger.prototype.extendPrefix = function(prefix){
-    return new PrefixedLogger(this.prefix+" "+prefix);
+    var logger = new PrefixedLogger(this.prefix+" "+prefix);
+    logger.inject(this.properties);
+    logger.init();
+    return logger;
+};
+
+function getFileAndLine(){
+    var orig = Error.prepareStackTrace;
+    Error.prepareStackTrace = function(_, stack){ return stack; };
+    var err = new Error;
+    Error.captureStackTrace(err, arguments.callee);
+    var stack = err.stack;
+    Error.prepareStackTrace = orig;
+
+    //console.log(JSON.stringify(stack));
+    var line = stack[1].getLineNumber();
+    var fileParts = stack[1].getFileName().split("/");
+    var result = fileParts[fileParts.length-1]+":"+line;
+
+    return result;
 }

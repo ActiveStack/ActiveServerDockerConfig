@@ -311,13 +311,13 @@ describe('Client', function(){
     describe('#afterLogin', function(){
         beforeEach(function(){ sinon.spy(client,'sendToAgent') });
         it('will send a reconnect message if existingClientId != clientId', function(){
-            client.session = SessionFactory.create();
             client.afterLogin();
             expect(client.sendToAgent.calledWith('reconnect')).to.be.true;
         });
 
         it('will send a connect message if existingClientId empty or the same as clientId', function(){
             client.session.userId = 'moo';
+            client.session.existingClientId = null;
             client.afterLogin();
             expect(client.sendToAgent.calledWith('connect')).to.be.true;
         });
@@ -545,10 +545,10 @@ describe('Client', function(){
         it('will process the message if logged in', function(){
             client.session.userId = 'a';
             client.onAuthSocketEvent('boo', {});
-
             expect(client.onSocketEvent.called).to.be.true;
         });
         it('will ignore the message if not logged in', function(){
+            client.session.userId = null;
             client.onAuthSocketEvent('boo',{});
             expect(client.onSocketEvent.called).to.be.false;
         });

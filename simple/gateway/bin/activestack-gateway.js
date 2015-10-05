@@ -4,20 +4,22 @@ var gateway = require('../src/main.js');
 // Pull the command from the command line
 var command = process.argv[2] || 'server';
 
+var configFile = process.argv[3];
+
 switch(command.toLowerCase()){
     case 's':
-        gateway.server();
+        new gateway.Server().run(configFile);
         break;
     case 'server':
-        gateway.server();
+        new gateway.Server().run(configFile);
         break;
     case 'c':
-        gateway.console();
+        new gateway.Console().run(configFile);
         break;
     case 'console':
-        gateway.console();
+        new gateway.Console().run(configFile);
         break;
     default:
-        gateway.server();
+        new gateway.Server().run(configFile);
         break;
 }

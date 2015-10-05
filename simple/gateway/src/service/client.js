@@ -1,7 +1,6 @@
 'use strict';
 
 var Session = require('./session');
-//var Auth = require('./agent_adapter/auth');
 var sys = require('util');
 var EventEmitter = require('events').EventEmitter;
 
@@ -21,7 +20,7 @@ GatewayClient.prototype.__proto__ = EventEmitter.prototype;
  * @param logger Winston instance.
  * @param properties Properties
  */
-function GatewayClient(socket, exchange, rabbitmq, logger, properties) {
+function GatewayClient(socket, exchange, rabbitmq, logger, properties, sessionFactory) {
     this.logger = logger.extendPrefix(socket.id);
     this.socket = socket;
     this.exchange = exchange;
@@ -30,7 +29,7 @@ function GatewayClient(socket, exchange, rabbitmq, logger, properties) {
 
     this.logger.verbose('New GatewayClient for socket.');
 
-    this.session = new Session(this.logger);	// Client's session, which also defines client's session ID (reconnectId)
+    this.session = sessionFactory.create();	// Client's session, which also defines client's session ID (reconnectId)
 
     this.awaitingResponseAcks = {};	// Holds callback functions for client message ACK's.
     this.awaitingResponseAcksInterval = {};	// Message ACK Intervals for client message re-sends.
@@ -137,7 +136,7 @@ GatewayClient.prototype.onLogout = function(){
     });
     this.sendToAgent('disconnectAuth', disconnectAuthMessage);
     this.session.logout();
-}
+};
 
 GatewayClient.prototype.onAck = function(message) {
     var ack = this.awaitingResponseAcks[message.correspondingMessageId];
@@ -260,6 +259,9 @@ GatewayClient.prototype.processResponse = function(response){
             this.logUserInWithAuthResponse(response);
             break;
         case 'AuthenticateOAuthAccessTokenResponse':
+            this.logUserInWithAuthResponse(response);
+            break;
+        case 'AuthenticationResponse':
             this.logUserInWithAuthResponse(response);
             break;
         case 'ConnectResponse':
@@ -430,7 +432,8 @@ GatewayClient.prototype.setupResendInterval = function(theResponse, receipt) {
     };
 
     this.awaitingResponseAcksInterval[theResponse.correspondingMessageId] =
-        setInterval(this.resend.bind(this), (this.properties['frontend.clientMessageResendInterval'] || 7500));
+        setInterval(this.resend.bind(this, theResponse),
+            (this.properties['frontend.clientMessageResendInterval'] || 7500));
 };
 
 /**
@@ -505,6 +508,8 @@ GatewayClient.UNAUTH_EVENTS = [
     'authenticateOAuthAccessToken',
     'authenticateOAuthCode',
     'authenticateUserAccount',
+    'authenticate',
+    'reauthenticate',
     'getAllServiceProviders',
     'getOAuthRequestToken',
     'getRegAppOAuths',
@@ -578,7 +583,10 @@ GatewayClient.prototype.onAuthSocketEvent = function(eventName, request){
     if(this.session.isLoggedIn()){
         this.onSocketEvent(eventName, request)
     }
-}
+    else{
+        this.logger.warn("Got auth event for unauthenticated session: "+eventName);
+    }
+};
 
 /**
  * sendToAgent - Send the message to the specified agent via RabbitMQ client queue.  If the message.clientId

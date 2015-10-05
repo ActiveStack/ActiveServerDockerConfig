@@ -2,15 +2,6 @@
 
 // TODO: Implement rolling session secret.
 var MAX_SESSION_AGE = (new Date(0)).setUTCDate(7);  // 7 days
-var SESSION_SECRET =
-    'YsDOJ6HtriYWK23OSeoEMSo687vc6yMIs9q9d4yzAUDer45tRTpsThFK0hIJWyFb' +
-    'Ng6iXgmOvm2bhTgXVqFOMyqxQ6DB85NkQXyedOVlEvcUq98rAudPTDwjIPE17XiW' +
-    'POF3cWUyWo1WJ6xPHT8ku2KsAlscyCFm3sWOZTIcgdQl9gzPvl8DrqAaIrnv1R8B' +
-    'k7ztIsmAyFC3lGK82LFmxh1oSWBwxyMIzyvB2BWs8DLsvgiS4I7suStuDWoHKnMZ' +
-    'JzQdxJAB5SItI0tTLFeQmbSVunoAo1t1dmk1FqjJ2JwPyXz0dfxteFMXGCODewXp' +
-    'lAN3pYif2eCbNyJKjkhq1gS1FIhlQlupvRKmHeYEFg1QHuCiRO4pVngYiRNs0eQY' +
-    'MnDJCiskuWA3OeFKkF1ZZYqNwJWMt58gDcIFIiRkX4tDN4qON4mrWVmFfiBiEXaV' +
-    '0EFbtFwZvvfNYUwMygWzvTOMXVEiwZwfdH7BIuAiicOC3fmfKEYMZgknUMORsB2u';
 
 var crypto = require('crypto');
 
@@ -22,8 +13,10 @@ module.exports = Session;
  *
  * @param logger Winston instance.
  */
-function Session(logger) {
+function Session(logger, properties) {
     this.logger = logger;
+    this.properties = properties;
+
     this._contents = {
         clientId: crypto.randomBytes(16).toString('hex'),
         existingClientId: undefined,
@@ -62,8 +55,8 @@ Session.prototype.clone = function(copy) {
     return copy;
 };
 
-Session.signSession = function(encodedSession) {
-    var hmac = crypto.createHmac('sha512', SESSION_SECRET);
+Session.prototype.signSession = function(encodedSession) {
+    var hmac = crypto.createHmac('sha512', this.properties['frontend.session_secret'] || 'twothreefour');
     hmac.update(encodedSession);
 
     return hmac.digest('base64');
@@ -81,7 +74,7 @@ Session.prototype.getSignedSession = function() {
     var jsonCopy = JSON.stringify(this.clone({ savedAt: Date.now() }));
 
     var encodedSession = new Buffer(jsonCopy).toString('base64');
-    return (encodedSession + ';' + Session.signSession(encodedSession));
+    return (encodedSession + ';' + this.signSession(encodedSession));
 };
 
 /**
@@ -120,7 +113,7 @@ Session.prototype.load = function(signedSession) {
     var encodedSession = parts[0];
     var signature = parts[1];
 
-    if (signature != Session.signSession(encodedSession)) {
+    if (signature != this.signSession(encodedSession)) {
         this.logger.warn('Dropping (potentially) tampered session: ' + signedSession);
         return false;
     }

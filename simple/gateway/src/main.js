@@ -10,11 +10,7 @@ module.exports = new ActiveStackGateway();
  */
 function ActiveStackGateway(){
     return {
-        server: function(){
-            require('./server_application.js');
-        },
-        console: function(){
-            require('./console.js')
-        }
+        Server: require('./server_application.js'),
+        Console: require('./console.js')
     }
 }
