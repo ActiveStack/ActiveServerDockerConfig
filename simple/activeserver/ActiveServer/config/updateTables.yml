@@ -1,0 +1,30 @@
+#driverClassName: oracle.jdbc.OracleDriver
+#jdbcUrl: jdbc:oracle:thin:@cvgtest2.cta6j6w4rrxw.us-west-2.rds.amazonaws.com:1521:ORCL
+#username: Pulse
+#password: Welcome#1
+#tableNames:
+# - mob_update_table
+#storedProcedureName: PULSE.MYTESTPROC
+#storedProcedureDefinition: CREATE PROCEDURE PULSE.MYTESTPROC (  new_lock_id IN NUMBER DEFAULT 123456, lock_date VARCHAR, result_id OUT NUMBER ) AS new_id NUMBER(3); BEGIN update mob_update_table u set u.lock_ID=new_lock_id, u.lock_Date=current_timestamp where u.ID = (SELECT ID FROM   (SELECT u2.ID, ROWNUM r FROM mob_update_table u2     WHERE u2.lock_ID is null OR u2.lock_Date < to_timestamp(lock_date, 'YYYY-MM-DD HH:MI:SS') AND rownum<=1 order by u2.time_stamp ASC  )  WHERE r <= 1); commit;  result_id:=-1;  SELECT u.ID INTO result_id FROM mob_update_table u WHERE u.lock_id=new_lock_id AND rownum<=1; EXCEPTION WHEN OTHERS THEN new_id:=-1; ROLLBACK; END MYTESTPROC
+# ---
+# Oracle Test DB
+driverClassName: oracle.jdbc.OracleDriver
+jdbcUrl: jdbc:oracle:thin:@//ec2-52-10-55-244.us-west-2.compute.amazonaws.com:1523/dasht
+username: PULSEUSER
+password: V2PULSEUSER
+tableNames:
+ - mob_update_table
+weight: 5
+storedProcedureName: PULSEUSER.UPDATE_TABLE_LOCK
+storedProcedureDefinition: create or replace PROCEDURE UPDATE_TABLE_LOCK (new_lock_id IN NUMBER DEFAULT 123456,lock_date VARCHAR,result_id OUT NUMBER) AS new_id NUMBER(3); BEGIN update mob_update_table u set u.lock_ID=new_lock_id, u.lock_Date=current_timestamp where (lock_id is null or lock_date < to_date(lock_date,'YYYY-MM-dd HH:mi:ss')) and ROWNUM <= 1; commit; result_id:=-1; SELECT u.ID INTO result_id FROM mob_update_table u WHERE u.lock_id=new_lock_id AND rownum<=1; EXCEPTION WHEN OTHERS THEN new_id:=-1; ROLLBACK; END UPDATE_TABLE_LOCK;
+#updateStatementSql: update :tableName set lock_id=:lockId, lock_date=CURRENT_TIMESTAMP where (lock_id is null or lock_date < to_date(':expireThreshold','YYYY-MM-dd HH:mi:ss')) and ROWNUM <= 1
+---
+driverClassName: oracle.jdbc.OracleDriver
+jdbcUrl: jdbc:oracle:thin:@//ec2-52-10-55-244.us-west-2.compute.amazonaws.com:1523/dasht
+username: PULSEUSER
+password: V2PULSEUSER
+tableNames:
+ - mob_update_table
+weight: 2
+storedProcedureName: PULSEUSER.UPDATE_TABLE_LOCK
+storedProcedureDefinition: create or replace PROCEDURE UPDATE_TABLE_LOCK (new_lock_id IN NUMBER DEFAULT 123456,lock_date VARCHAR,result_id OUT NUMBER) AS new_id NUMBER(3); BEGIN update mob_update_table u set u.lock_ID=new_lock_id, u.lock_Date=current_timestamp where (lock_id is null or lock_date < to_date(lock_date,'YYYY-MM-dd HH:mi:ss')) and ROWNUM <= 1; commit; result_id:=-1; SELECT u.ID INTO result_id FROM mob_update_table u WHERE u.lock_id=new_lock_id AND rownum<=1; EXCEPTION WHEN OTHERS THEN new_id:=-1; ROLLBACK; END UPDATE_TABLE_LOCK;

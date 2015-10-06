@@ -1,0 +1,19 @@
+driverClassName: oracle.jdbc.OracleDriver
+jdbcUrl: jdbc:oracle:thin:@cvgtest2.cta6j6w4rrxw.us-west-2.rds.amazonaws.com:1521:ORCL
+username: Pulse
+password: Welcome#1
+name: PULSE.MYTESTPROC
+parameters:
+ - name: lock_id
+   position: 1
+   type: int
+   direction: IN
+ - name: lock_date
+   position: 2
+   type: string
+   direction: IN
+ - name: result_id
+   position: 3
+   type: int
+   direction: OUT
+---
