@@ -1,19 +1,13 @@
 !com.pulse.dataprovider.SqlConnectionFactory
-#driverClassName: com.mysql.jdbc.Driver
-#jdbcUrl: jdbc:mysql://pulse.cta6j6w4rrxw.us-west-2.rds.amazonaws.com:3306/Pulse
-#username: pulse
-#password: Welcome#1
-#tableNames:
-# - UpdateTable
-name: CVG Test2
-driverClassName: oracle.jdbc.OracleDriver
-jdbcUrl: jdbc:oracle:thin:@cvgtest2.cta6j6w4rrxw.us-west-2.rds.amazonaws.com:1521:ORCL
-username: Pulse
-password: Welcome#1
----
-!com.pulse.dataprovider.SqlConnectionFactory
 name: default
 driverClassName: oracle.jdbc.OracleDriver
-jdbcUrl: jdbc:oracle:thin:@//ec2-52-10-55-244.us-west-2.compute.amazonaws.com:1523/edwrt.world
+jdbcUrl: jdbc:oracle:thin:@//cvgoedw1.dcd.convergys.com:1521/edwrt.world
 username: PULSEUSER
 password: V2PULSEUSER
+---
+!com.pulse.dataprovider.SqlConnectionFactory
+name: estart
+driverClassName: oracle.jdbc.OracleDriver
+jdbcUrl: jdbc:oracle:thin:@//odcpdb01.dcd.convergys.com:1521/cybtim.cmg.convergys.com
+username: pulse
+password: pulse

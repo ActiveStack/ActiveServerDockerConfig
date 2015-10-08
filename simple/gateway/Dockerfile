@@ -1,15 +1,15 @@
-FROM node:0.10-onbuild
+FROM node:4.1.2
 
 COPY . /usr/src/
-WORKDIR /usr/src/app/bin/
+# WORKDIR /usr/src/app/bin/
 
 EXPOSE 8080 
 
-RUN chmod +x  activestack-gateway.js
+#RUN chmod +x /usr/src/app/bin/activestack-gateway.js
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/src/app/bin/activestack-gateway.js", "server|s"]
+CMD ["node","/usr/src/app/bin/activestack-gateway.js", "server|s"]
 
