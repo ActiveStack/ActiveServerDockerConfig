@@ -22,7 +22,8 @@
     "timekeeper": "*"
   },
   "scripts": {
-    "test": "mocha --recursive test/unit"
+    "test": "mocha --recursive test/unit",
+    "start": "node bin/activestack-gateway.js"
   },
   "repository": {
     "type": "git",

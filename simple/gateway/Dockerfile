@@ -11,5 +11,5 @@ COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/src/app/bin/activestack-gateway.js", "server|s"]
+CMD ["/usr/src/app/bin/activestack-gateway.js"]
 
