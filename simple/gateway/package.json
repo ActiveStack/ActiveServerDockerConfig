@@ -11,7 +11,6 @@
     "redis": "^0.12.1",
     "socket.io": "git://github.com/curb47/socket.io.git",
     "socket.io-client": "^0.9.9",
-    "webkit-devtools-agent": "^0.3.1",
     "winston": "^0.6.2"
   },
   "devDependencies": {
